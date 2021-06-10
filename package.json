@@ -1,0 +1,41 @@
+{
+  "name": "linq-mqtt",
+  "version": "0.0.1",
+  "description": "npm library to interact with mqtt Linq Devices",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Ricardo Levano",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com/Altronix/linq-mqtt.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Altronix/linq-mqtt/issues"
+  },
+  "homepage": "https://github.com/Altronix/linq-mqtt/blob/master/README.md",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint",
+    "lint-fix": "npm run lint -- --fix"
+  },
+  "dependencies": {
+    "aedes": "^0.46.0",
+    "mqtt": "^4.2.6"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.19",
+    "@types/node": "^14.14.8",
+    "@typescript-eslint/eslint-plugin": "^4.10.0",
+    "@typescript-eslint/parser": "^4.10.0",
+    "eslint": "^7.15.0",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.4.4",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.0.5"
+  }
+}
