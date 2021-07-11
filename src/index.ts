@@ -4,20 +4,18 @@ import mqtt from 'mqtt'
 import { createServer } from 'net'
 
 const ATX_TOPIC = 'ATX/linq'
-const BROKER_URL = 'mqtt://localhost:1883'
-const MQTT_PORT = 1883
+const MQTT_PORT = 1883 /* Default non-tls port */
+const BROKER_URL = `mqtt://localhost:${MQTT_PORT}`
 
 const broker = createServer(Server().handle)
 
 export declare interface LinqMQTT {
-  on(event: 'message', listener: (msg: object) => void): this
+  on(event: 'message', listener: (msg: string) => void): this
 }
 
 export class LinqMQTT extends EventEmitter {
-  devices: Map<string, object>
   constructor(port: number = MQTT_PORT) {
     super()
-    this.devices = new Map()
     this.start(port)
   }
 
@@ -39,21 +37,15 @@ export class LinqMQTT extends EventEmitter {
 
       client.on('message', (topic, message) => {
         if (topic === ATX_TOPIC) {
-          this.emit('message', message)
+          let str = message.toString().trim()
+          try {
+            let obj = JSON.parse(str)
+            this.emit('message', str)
+          } catch (err) {
+            console.log(err)
+          }
         }
       })
     })
-  }
-
-  get_devices() {
-    let arr: object[] = []
-    for (let value of this.devices.values()) {
-      arr.push(value)
-    }
-    return arr
-  }
-
-  clear() {
-    this.devices.clear()
   }
 }
