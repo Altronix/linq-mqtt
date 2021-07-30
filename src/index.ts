@@ -3,14 +3,16 @@ import Server from 'aedes'
 import mqtt from 'mqtt'
 import { createServer } from 'net'
 
-const ATX_TOPIC = 'ATX/linq'
+const STATUS_TOPIC = 'linq/status'
+const ALERT_TOPIC = 'linq/alert'
 const MQTT_PORT = 1883 /* Default non-tls port */
 const BROKER_URL = `mqtt://localhost:${MQTT_PORT}`
 
 const broker = createServer(Server().handle)
 
 export declare interface LinqMQTT {
-  on(event: 'message', listener: (msg: string) => void): this
+  on(event: 'status', listener: (msg: string) => void): this
+  on(event: 'alert', listener: (msg: string) => void): this
 }
 
 export class LinqMQTT extends EventEmitter {
@@ -29,18 +31,26 @@ export class LinqMQTT extends EventEmitter {
     client.on('connect', (ack) => {
       console.log('Local client connected to Aedes broker.')
 
-      client.subscribe(ATX_TOPIC, (err) => {
+      client.subscribe(STATUS_TOPIC, (err) => {
         if (err) {
           console.log(err)
         }
       })
 
       client.on('message', (topic, message) => {
-        if (topic === ATX_TOPIC) {
+        if (topic === STATUS_TOPIC) {
           let str = message.toString().trim()
           try {
-            let obj = JSON.parse(str)
-            this.emit('message', str)
+            //let obj = JSON.parse(str)
+            this.emit('status', str)
+          } catch (err) {
+            console.log(err)
+          }
+        }
+        if (topic === ALERT_TOPIC) {
+          let str = message.toString().trim()
+          try {
+            this.emit('alert', str)
           } catch (err) {
             console.log(err)
           }
