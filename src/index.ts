@@ -37,6 +37,12 @@ export class LinqMQTT extends EventEmitter {
         }
       })
 
+      client.subscribe(ALERT_TOPIC, (err) => {
+        if (err) {
+          console.log(err)
+        }
+      })
+
       client.on('message', (topic, message) => {
         if (topic === STATUS_TOPIC) {
           let str = message.toString().trim()
