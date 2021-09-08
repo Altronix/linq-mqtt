@@ -11,8 +11,11 @@ const client = mqtt.connect(BROKER_URL)
 const broker = createServer(Server().handle)
 
 export declare interface LinqMQTT {
+  on(event: 'connect', listener: () => void): this
   on(event: 'status', listener: (msg: string) => void): this
   on(event: 'alert', listener: (msg: string) => void): this
+  on(event: 'subscribed', listener: (topic: string) => void): this
+  on(event: 'ota', listener: (msg: string) => void): this
 }
 
 export class LinqMQTT extends EventEmitter {
@@ -29,23 +32,20 @@ export class LinqMQTT extends EventEmitter {
     client.on('connect', (ack) => {
       console.log('Local client connected to Aedes broker.')
 
-      client.subscribe(Config.topic.status, (err) => {
+      let subscribe_topics: string[] = [
+        Config.topic.status,
+        Config.topic.alert,
+        Config.topic.ota
+      ]
+      client.subscribe(subscribe_topics, (err, granted) => {
         if (err) {
           console.log(err)
+        } else {
+          this.emit('subscribed', JSON.stringify(granted))
         }
       })
 
-      client.subscribe(Config.topic.alert, (err) => {
-        if (err) {
-          console.log(err)
-        }
-      })
-
-      client.subscribe(Config.topic.update, (err) => {
-        if (err) {
-          console.log(err)
-        }
-      })
+      this.emit('connect')
 
       client.on('message', (topic, message) => {
         if (topic === Config.topic.status) {
@@ -64,15 +64,25 @@ export class LinqMQTT extends EventEmitter {
             console.log(err)
           }
         }
+        /*
+        if (topic === Config.topic.firmware_feedback) {
+          let str = message.toString().trim()
+          try {
+            this.emit('firmware_feedback', str)
+          } catch (err) {
+            console.log(err)
+          }
+        }
+        */
       })
     })
   }
 
-  publish(topic_name: string, payload: string) {
+  asynpub(topic_name: string, payload: string) {
     return new Promise<string>((resolve, reject) => {
       client.publish(topic_name, payload, { qos: 0 }, () => {
         client.on('message', (topic, message) => {
-          if (topic === Config.topic.update) {
+          if (topic === Config.topic.ota) {
             let str = message.toString().trim()
             try {
               resolve(str)
@@ -83,5 +93,9 @@ export class LinqMQTT extends EventEmitter {
         })
       })
     })
+  }
+
+  pub(topic_name: string, payload: string) {
+    client.publish(topic_name, payload)
   }
 }

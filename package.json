@@ -1,6 +1,6 @@
 {
   "name": "linq-mqtt",
-  "version": "0.0.31",
+  "version": "0.0.42",
   "description": "npm library to interact with mqtt Linq Devices",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

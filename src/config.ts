@@ -6,6 +6,6 @@ export const Config = {
   topic: {
     status: 'linq/status',
     alert: 'linq/alert',
-    update: 'linq/upload/response'
+    ota: 'linq/ota'
   }
 }
