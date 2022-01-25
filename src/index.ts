@@ -64,23 +64,13 @@ export class LinqMQTT extends EventEmitter {
             console.log(err)
           }
         }
-        /*
-        if (topic === Config.topic.firmware_feedback) {
-          let str = message.toString().trim()
-          try {
-            this.emit('firmware_feedback', str)
-          } catch (err) {
-            console.log(err)
-          }
-        }
-        */
       })
     })
   }
 
-  asynpub(topic_name: string, payload: string) {
-    return new Promise<string>((resolve, reject) => {
-      client.publish(topic_name, payload, { qos: 0 }, () => {
+  asynpub_ota(topic_name: string, payload: string) {
+    return new Promise((resolve, reject) => {
+      client.publish(topic_name, payload, { qos: 1 }, () => {
         client.on('message', (topic, message) => {
           if (topic === Config.topic.ota) {
             let str = message.toString().trim()
@@ -93,9 +83,5 @@ export class LinqMQTT extends EventEmitter {
         })
       })
     })
-  }
-
-  pub(topic_name: string, payload: string) {
-    client.publish(topic_name, payload)
   }
 }
