@@ -1,6 +1,6 @@
 {
   "name": "linq-mqtt",
-  "version": "0.0.51",
+  "version": "0.0.53",
   "description": "npm library to interact with mqtt Linq Devices",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,21 +21,20 @@
     "lint-fix": "npm run lint -- --fix"
   },
   "dependencies": {
-    "aedes": "^0.46.0",
-    "mqtt": "^4.2.6"
+    "mqtt": "^4.3.6"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.19",
-    "@types/node": "^14.14.8",
-    "@typescript-eslint/eslint-plugin": "^4.10.0",
-    "@typescript-eslint/parser": "^4.10.0",
-    "eslint": "^7.15.0",
-    "eslint-config-prettier": "^7.0.0",
-    "eslint-plugin-prettier": "^3.3.0",
-    "jest": "^26.6.3",
-    "prettier": "^2.2.1",
-    "ts-jest": "^26.4.4",
-    "ts-node": "^10.0.0",
-    "typescript": "^4.0.5"
+    "@types/jest": "^27.4.1",
+    "@types/node": "^17.0.21",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.4.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.5.1",
+    "prettier": "^2.5.1",
+    "ts-jest": "^27.1.3",
+    "ts-node": "^10.6.0",
+    "typescript": "^4.6.2"
   }
 }

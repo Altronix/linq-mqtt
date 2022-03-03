@@ -1,14 +1,14 @@
 import { EventEmitter } from 'events'
-import { Server } from 'aedes'
+//import { Server } from 'aedes'
 import mqtt from 'mqtt'
-import { createServer } from 'net'
+//import { createServer } from 'net'
 import { Config } from './config'
 
 const MQTT_PORT = Config.port.mqtt
-const BROKER_URL = `mqtt://localhost:${MQTT_PORT}`
+//const BROKER_URL = `mqtt://localhost:${MQTT_PORT}`
 
-const client = mqtt.connect(BROKER_URL)
-const broker = createServer(Server().handle)
+//const client = mqtt.connect(BROKER_URL)
+//const broker = createServer(Server().handle)
 
 export declare interface LinqMQTT {
   on(event: 'connect', listener: () => void): this
@@ -19,25 +19,41 @@ export declare interface LinqMQTT {
 }
 
 export class LinqMQTT extends EventEmitter {
-  constructor(port: number = MQTT_PORT) {
+  client: mqtt.MqttClient
+  constructor(
+    brokerUrl: string,
+    port: number = MQTT_PORT,
+    username: string,
+    password: string = ''
+  ) {
     super()
-    this.start(port)
+    const options = {
+      clean: true, // Clean session
+      connectTimeout: 4000,
+      clientId: 'mqttclient',
+      username: username,
+      password: password
+    }
+    this.client = mqtt.connect(`mqtt://${brokerUrl}:${MQTT_PORT}`, options)
+    this.start()
   }
 
-  async start(port: number) {
+  start() {
+    /*
     await broker.listen(MQTT_PORT, () => {
       console.log(`Aedes broker listening on port ${MQTT_PORT}`)
     })
+    */
 
-    client.on('connect', (ack) => {
-      console.log('Local client connected to Aedes broker.')
+    this.client.on('connect', (ack) => {
+      console.log('Local client connected to broker.')
 
       let subscribe_topics: string[] = [
         Config.topic.status,
         Config.topic.alert,
         Config.topic.ota
       ]
-      client.subscribe(subscribe_topics, (err, granted) => {
+      this.client.subscribe(subscribe_topics, (err, granted) => {
         if (err) {
           console.log(err)
         } else {
@@ -47,7 +63,7 @@ export class LinqMQTT extends EventEmitter {
 
       this.emit('connect')
 
-      client.on('message', (topic, message) => {
+      this.client.on('message', (topic, message) => {
         if (topic === Config.topic.status) {
           let str = message.toString().trim()
           try {
@@ -70,8 +86,8 @@ export class LinqMQTT extends EventEmitter {
 
   asynpub_ota(topic_name: string, payload: string) {
     return new Promise((resolve, reject) => {
-      client.publish(topic_name, payload, { qos: 1 }, () => {
-        client.on('message', (topic, message) => {
+      this.client.publish(topic_name, payload, { qos: 1 }, () => {
+        this.client.on('message', (topic, message) => {
           if (topic === Config.topic.ota) {
             let str = message.toString().trim()
             try {
